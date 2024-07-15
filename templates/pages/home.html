@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-{% include 'navbar.html' %}
+    {% include 'navbar.html' %}
+    <div class="container-fluid-center" style="padding-top: 150px">
+        <div class="d-grid gap-5 col-3 mx-auto">
+            <div class="container-fluid-center" style="display: flex; justify-content: center; padding-top: 100px">
+                <a href='' class="btn btn-danger" style="height:150px; width: 300px; align-content: center"
+                   type="button"><i
+                        class="bi bi-cookie"></i> Joacă!</a>
+            </div>
+
+            {#            create logic for log in    #}
+
+            {#            <a href='' class="btn btn-danger" style="height:150px; width: 300px; align-content: center" type="button"><i#}
+            {#                    class="bi bi-cookie"></i> Joacă!</a>#}
+        </div>
+    </div>
+
 
 {% endblock %}
