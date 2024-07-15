@@ -1,25 +1,52 @@
 {% load static %}
 <nav class="navbar navbar-dark bg-dark fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'home_page' %}">Offcanvas dark navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Dark offcanvas</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div class="offcanvas-body">
-        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-        </ul>
-      </div>
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home_page' %}"><i class="bi bi-arrow-left-right"></i></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
+                aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
+             aria-labelledby="offcanvasDarkNavbarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel"><i class="bi bi-arrow-left-right"></i></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        {% if user.is_authenticated %}
+                            {#                            <a class="dropdown-item" href="{% url 'update_team' user.id %}">Schimba echipa</a></li>#}
+                            {#                            <form method="post" action="{% url 'logout' %}">#}
+                            {#                            <a class="dropdown-item" href="{% url 'update_user' user.id %}">Editează contul!</a></li>#}
+                            {#                            <form method="post" action="{% url 'logout' %}">#}
+                            {#                            <a class="dropdown-item" href="{% url 'delete_user' user.id %}">Șterge contul!</a></li>#}
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger"
+                                        style="background-color: orangered;color:white; margin-right: 5px">
+                                    Logout, {{ user.username }}
+                                </button>
+                            </form>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
 </nav>

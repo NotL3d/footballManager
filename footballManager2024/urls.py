@@ -16,10 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views
+
+from home.forms import AuthenticationNewForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
-    path('', include('django.contrib.auth.urls'))
+    path('', include('django.contrib.auth.urls')),
+    path("login/", views.LoginView.as_view(form_class=AuthenticationNewForm), name="login"),
 
 ]

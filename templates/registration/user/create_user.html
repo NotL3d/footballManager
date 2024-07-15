@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Crează-ți contul {% endblock %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div class="container-fluid col-md-5" style="padding-top: 60px;">
+        <div class='row'>
+            <div class=" col-xs-6">
+                <div class="card col-md-auto">
+                    <div class="card-header">
+                        <h3 class="text-center">Salutare! 😀 </h3>
+                        <h3 class="text-center">Înainte de a accesa site-ul ai nevoie de un cont! </h3>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="card-body">
+                                {{ form.as_p }}
+                                {% if form.email.errors %}
+                                    <div class="error-message">
+                                        {% for error in form.email.errors %}
+                                            <h5 style="color:red;"> Aceasta adresa de e-mail este inregistrată!</h5>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer text-center">
+                                <button type="submit" class="btn btn-outline-success"> Crează contul!</button>
+                                <a href="{% url 'home_page' %}" class="btn btn-outline-danger">Anulare!</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
