@@ -20,13 +20,13 @@
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
+                            <a class="nav-link" href="#">Toată echipa </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="bi bi-arrow-left-right"></i> Formația echipei </a>
+                            <a class="nav-link" href="#"><i class="bi bi-arrow-left-right"></i> Jucătorii aleși</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="bi bi-code"></i> Schimba Echipa!</a>
+                            <a class="nav-link" href="{% url 'choose_team' %}"><i class="bi bi-code"></i> Schimba Echipa!</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'update_user' user.id %}"><i class="bi bi-pencil"></i>  Actualizează contul!</a>

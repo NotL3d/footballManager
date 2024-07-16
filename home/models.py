@@ -49,10 +49,10 @@ class TeamModel(models.Model):
 class ChoseTeamModel(models.Model):
 
     user = models.OneToOneField(CustomUserModel, on_delete=models.CASCADE, null=True)
-    team = models.ForeignKey(TeamModel, on_delete=models.CASCADE)
-    def __str__(self):
-        return f'{self.team}'
+    team = models.ForeignKey(TeamModel, null=True, blank=True, on_delete=models.SET_NULL)
 
+    def __str__(self):
+        return f"{self.user.username} - {self.team.name}"
 
 class Player(models.Model):
     position_options = (
@@ -87,3 +87,4 @@ class Player(models.Model):
             total_skills += getattr(self, field)
         self.overall_avg = total_skills / len(attributes_fields)
         super().save(*args, **kwargs)
+
