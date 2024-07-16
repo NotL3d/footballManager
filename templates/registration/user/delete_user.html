@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %} Șterge utilizatorul - {{ customuser.username }} {% endblock %}
+
+{% block content %}
+    <style>
+        .card-custom {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 3rem;
+        }
+        .card-header-custom {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .card-body-custom {
+            padding: 2rem;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        .card-footer-custom {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            background-color: #f8f9fa;
+        }
+        .btn-custom {
+            border-radius: 50px;
+            padding: 0.5rem 2rem;
+            font-size: 1rem;
+        }
+        .btn-danger-custom {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-secondary-custom {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+    </style>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card card-custom">
+                    <div class="card-header card-header-custom">
+                        <h3>Șterge utilizatorul - {{ customuser.username }}</h3>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="card-body card-body-custom">
+                            <h3>Ești sigur că vrei să îți ștergi contul?</h3>
+                        </div>
+                        <div class="card-footer card-footer-custom">
+                            <button type="submit" class="btn btn-danger btn-custom btn-danger-custom">Da</button>
+                            <a href="{% url 'home_page' %}" class="btn btn-secondary btn-custom btn-secondary-custom">Nu</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

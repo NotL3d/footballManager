@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div class="container mt-5" style="padding-top: 100px"> 
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        Salutare! {{ user_profile.username }} ⚽
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Detaliile profilului!</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>Nume:</strong> {{ user_profile.first_name }}</li>
+                            <li class="list-group-item"><strong>Prenume:</strong> {{ user_profile.last_name }}</li>
+                            <li class="list-group-item"><strong>Data de nastere:</strong> {{ user_profile.birth_day }}
+                            </li>
+                            <li class="list-group-item"><strong>email:</strong> {{ user_profile.email }}</li>
+                            <li class="list-group-item"><strong>Jocuri câștigate:</strong> {{ user_profile.wins }}</li>
+                            <li class="list-group-item"><strong>Jocuri pierdute:</strong> {{ user_profile.losses }}</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'update_user' user.id %}" class="btn btn-primary">Schimbă datele profilului!</a>
+                        <a href="{% url 'home_page' %}" class="btn btn-secondary">Acasă! </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

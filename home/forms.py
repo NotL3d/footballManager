@@ -1,9 +1,10 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 
 from home.models import CustomUserModel
 
 
+# form create user
 class CustomUserForm(UserCreationForm):
     class Meta:
         model = CustomUserModel
@@ -13,6 +14,7 @@ class CustomUserForm(UserCreationForm):
 
         }
 
+    # edit label and help text for user registration form
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].label = 'Utilizator'
@@ -44,8 +46,41 @@ class CustomUserForm(UserCreationForm):
             {'class': 'form-control', 'placeholder': 'Rescrie parola!'})
 
 
-# authentication form
+# update form for user
+class CustomUserUpdateForm(UserChangeForm):
+    class Meta:
+        model = CustomUserModel
+        fields = ['first_name', 'last_name', 'gender', 'birth_day']
+        exclude = ['username', 'email']
+        widgets = {
+            "birth_day": forms.DateInput(attrs={'class': 'form-control', 'type': "date"})
+        }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['first_name'].label = 'Numele de familie'
+        self.fields['last_name'].label = 'Nume'
+        self.fields['birth_day'].label = 'Ziua de naștere'
+        self.fields['gender'].label = 'Sexul'
+        self.fields['birth_day'].help_text = "* Selectati data de naștere!"
+
+        self.fields['first_name'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Numele de familie'
+        })
+        self.fields['last_name'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Nume'
+        })
+        self.fields['gender'].widget.attrs.update({
+            'class': 'form-control',
+        })
+
+        if 'password' in self.fields:
+            self.fields['password'].help_text = ''
+            self.fields['password'].widget = forms.HiddenInput()
+
+# authentication form
 class AuthenticationNewForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
