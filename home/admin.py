@@ -8,6 +8,7 @@ from .models import *
 
 admin.site.register(CustomUserModel)
 admin.site.register(ChoseTeamModel)
+admin.site.register(SelectedPlayer)
 
 @admin.register(Player)
 class PlayerAdmin(ImportExportModelAdmin):

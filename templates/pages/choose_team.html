@@ -1,20 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-{% include 'navbar.html' %}
-<div class="container-fluid col-md-6" style="padding-top: 150px;">
-    <form method="post" class="form-group" style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-        {% csrf_token %}
-        <label for="team" style="font-weight: bold;">Alege echipa cu care vrei sa joci!:</label>
-        <select name="team_id" id="team" class="form-control" style="margin-top: 10px; margin-bottom: 20px;">
-            {% for team in teams %}
-                <option value="{{ team.id }}">{{ team.name }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="btn btn-primary">Alege echipa!</button>
-    </form>
-</div>
+    {% include 'navbar.html' %}
+    <div class="container-fluid col-md-6 my-5" style="padding-top:80px">
+        <ul class="list-group list-group-flush p-3 rounded shadow-sm bg-light">
+            <li class="list-group-item"><strong>Echipa curentă: {{ chosen_team.team}}</strong> </li>
+        </ul>
+        <form method="post" class="form-group bg-light p-4 rounded shadow-sm mt-4">
+            {% csrf_token %}
+            <label for="team" class="font-weight-bold">Alege echipa cu care vrei să joci!:</label>
+            <select name="team_id" id="team" class="form-control mt-2 mb-4">
+                {% for team in teams %}
+                    <option value="{{ team.id }}">{{ team.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary w-100">Alege echipa!</button>
+        </form>
+    </div>
 
-{% if error %}
-    <p style="color: red; text-align: center; font-weight: bold;">{{ error }}</p>
-{% endif %}
+    {% if error %}
+        <p class="text-danger text-center font-weight-bold mt-3">{{ error }}</p>
+    {% endif %}
 {% endblock %}

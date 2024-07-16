@@ -1,6 +1,6 @@
 from django.urls import path
 from home import views
-from home.views import choose_team
+from home.views import choose_team, select_players,chosen_players
 
 urlpatterns = [
     # home path
@@ -12,6 +12,7 @@ urlpatterns = [
     path('view-user/<int:pk>', views.UserDetailView.as_view(), name='detail_user'),
     # choose team path
     path('choose_team/', choose_team, name='choose_team'),
-
+    path('select_players/', select_players, name='select_players'),
+    path('chosen-players/', chosen_players, name='chosen_players'),
 
 ]

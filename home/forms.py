@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
+from home.models import CustomUserModel, Player, SelectedPlayer, ChoseTeamModel
 
-from home.models import CustomUserModel
 
 
 # form create user
@@ -80,6 +80,7 @@ class CustomUserUpdateForm(UserChangeForm):
             self.fields['password'].help_text = ''
             self.fields['password'].widget = forms.HiddenInput()
 
+
 # authentication form
 class AuthenticationNewForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
@@ -88,3 +89,42 @@ class AuthenticationNewForm(AuthenticationForm):
         self.fields['password'].label = 'Parola'
         self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': ''})
         self.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': ''})
+
+
+
+
+class PlayerSelectionForm(forms.Form):
+    players = forms.ModelMultipleChoiceField(
+        queryset=Player.objects.none(),
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(PlayerSelectionForm, self).__init__(*args, **kwargs)
+        if user:
+            chosen_team = ChoseTeamModel.objects.get(user=user)
+            self.fields['players'].queryset = Player.objects.filter(team=chosen_team.team)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        players = cleaned_data.get('players')
+
+        if len(players) != 11:
+            raise forms.ValidationError("You must select exactly 11 players.")
+
+        position_counts = {pos: 0 for pos, _ in Player.position_options}
+
+        for player in players:
+            position_counts[player.position] += 1
+
+        if position_counts['goalkeeper'] != 1:
+            raise forms.ValidationError("You must select exactly 1 Goalkeeper.")
+        if position_counts['defender'] != 4:
+            raise forms.ValidationError("You must select exactly 4 Defenders.")
+        if position_counts['midfielder'] != 4:
+            raise forms.ValidationError("You must select exactly 4 Midfielders.")
+        if position_counts['attacker'] != 2:
+            raise forms.ValidationError("You must select exactly 2 Attackers.")
+
+        return cleaned_data

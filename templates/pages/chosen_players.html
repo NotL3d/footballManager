@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div class="container mt-5">
+        <h2 style="color:white;padding-top: 15px">Echipa ta!</h2>
+        {% if selected_players %}
+            <ul class="list-group mt-3">
+                {% for player in selected_players %}
+                    <li class="list-group-item">
+                        {{ player.player.name }} - Poziție: {{ player.player.position }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">Nu ai selectat nici un jucător.</p>
+        {% endif %}
+    </div>
+{% endblock %}

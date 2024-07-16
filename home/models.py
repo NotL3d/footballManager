@@ -76,7 +76,7 @@ class Player(models.Model):
     overall_avg = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} poziție ({self.position})'
 
     def save(self, *args, **kwargs):
         attributes_fields = [
@@ -87,4 +87,15 @@ class Player(models.Model):
             total_skills += getattr(self, field)
         self.overall_avg = total_skills / len(attributes_fields)
         super().save(*args, **kwargs)
+
+# selected player model
+class SelectedPlayer(models.Model):
+    user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'La echipa ta s-a alăturat :  {self.player}'
+
+
+
 

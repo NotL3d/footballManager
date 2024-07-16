@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div class="container-fluid col-md-6 my-5" style="padding-top:80px">
+        <form method="post" class="form-group bg-light p-4 rounded shadow-sm mt-4">
+            {% csrf_token %}
+            <label for="players" class="font-weight-bold">Alege 11 jucători pentru echipa ta:</label>
+            <label for="players" class="font-weight-bold">-1 goalkeeper</label>
+            <label for="players" class="font-weight-bold">-4 defenders</label>
+            <label for="players" class="font-weight-bold">-4 midfielders</label>
+            <label for="players" class="font-weight-bold">-2 attackers</label>
+            <div id="players" class="form-check mt-2 mb-4">
+                {% for widget in form.players %}
+                    <div class="form-check">
+                        {{ widget.tag }} 
+                        <label class="form-check-label">
+                            {{ widget.choice_label }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Salvează</button>
+        </form>
+
+        {% if form.errors %}
+            <div class="alert alert-danger mt-3">
+                <ul class="mb-0">
+                            <li>Ceva nu a mers bine, selecteaza jucatorii</li>
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

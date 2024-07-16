@@ -20,33 +20,37 @@
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Toată echipa </a>
+                            <a class="nav-link" href="{% url 'chosen_players' %}"> <i class="bi bi-people"></i>  Echipa mea!  </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="bi bi-arrow-left-right"></i> Jucătorii aleși</a>
+                            <a class="nav-link" href="{% url 'select_players' %}"><i class="bi bi-arrow-left-right"></i> Alege jucătorii</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'choose_team' %}"><i class="bi bi-code"></i> Schimba Echipa!</a>
+                            <a class="nav-link" href="{% url 'choose_team' %}"><i class="bi bi-code"></i> Schimba
+                                Echipa!</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'update_user' user.id %}"><i class="bi bi-pencil"></i>  Actualizează contul!</a>
+                            <a class="nav-link" href="{% url 'update_user' user.id %}"><i class="bi bi-pencil"></i>
+                                Actualizează contul!</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'delete_user' user.id %}"><i class="bi bi-x"></i>  Șterge contul! </a>
+                            <a class="nav-link" href="{% url 'delete_user' user.id %}"><i class="bi bi-x"></i> Șterge
+                                contul! </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'detail_user' user.id %}"><i class="bi bi-person"></i> Detalii cont</a>
+                            <a class="nav-link" href="{% url 'detail_user' user.id %}"><i class="bi bi-person"></i>
+                                Detalii cont</a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
                         {% if user.is_authenticated %}
-                        <form method="post" action="{% url 'logout' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-danger"
-                                    style="background-color: orangered;color:white; margin-right: 5px">
-                                Logout, {{ user.username }}
-                            </button>
-                        </form>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger"
+                                        style="background-color: orangered;color:white; margin-right: 5px">
+                                    Logout, {{ user.username }}
+                                </button>
+                            </form>
                         {% endif %}
                     </li>
                 </ul>
