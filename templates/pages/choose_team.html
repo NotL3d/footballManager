@@ -3,7 +3,7 @@
     {% include 'navbar.html' %}
     <div class="container-fluid col-md-6 my-5" style="padding-top:80px">
         <ul class="list-group list-group-flush p-3 rounded shadow-sm bg-light">
-            <li class="list-group-item"><strong>Echipa curentă: {{ chosen_team.team}}</strong> </li>
+            <li class="list-group-item"><strong>Echipa curentă: {{ chosen_team.name}}</strong> </li>
         </ul>
         <form method="post" class="form-group bg-light p-4 rounded shadow-sm mt-4">
             {% csrf_token %}

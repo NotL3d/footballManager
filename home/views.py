@@ -30,7 +30,13 @@ def choose_team(request):
         # Redirect or render the page as necessary
         return redirect('select_players')  # Or wherever you want to go next
 
-    return render(request, 'pages/choose_team.html', {'teams': TeamModel.objects.all()})
+    # Include chosen_team in the context
+    context = {
+        'teams': TeamModel.objects.all(),
+        'chosen_team': chosen_team.team,  # Ensure you're accessing the team attribute
+    }
+
+    return render(request, 'pages/choose_team.html', context)
 
 
 @login_required
@@ -51,23 +57,27 @@ def select_players(request):
 
     return render(request, 'pages/select_players.html', {'form': form})
 
+
 @login_required
 def chosen_players(request):
     selected_players = SelectedPlayer.objects.filter(user=request.user)
 
     return render(request, 'pages/chosen_players.html', {'selected_players': selected_players})
 
+
 # game loop
 
 def get_user_team(user):
     return ChoseTeamModel.objects.get(user=user).team
 
+
 def compute_team_score(team):
     players = Player.objects.filter(team=team)
     score = 0
     for player in players:
-            score += player.ball_skills + player.passing + player.shooting + player.defence + player.physical + player.mental + player.goalkeeper
+        score += player.ball_skills + player.passing + player.shooting + player.defence + player.physical + player.mental + player.goalkeeper
     return score
+
 
 def simulate_match(team1, team2):
     score1 = compute_team_score(team1) + random.randint(-10, 10)
@@ -95,6 +105,7 @@ def simulate_stage(teams, user_team):
                 winners.append(team2)
 
     return winners, user_won
+
 
 def start_tournament(request):
     user_team = get_user_team(request.user)
@@ -144,13 +155,11 @@ def tournament_stage(request):
         champion = winners[0]
         request.session['tournament_teams'] = [champion.id]
         request.session['current_stage'] = 'Champion'
-        return render(request, 'pages/result_game_computer.html', {'stage': stage, 'teams': teams, 'champion': champion})
+        return render(request, 'pages/result_game_computer.html',
+                      {'stage': stage, 'teams': teams, 'champion': champion})
 
     return render(request, 'pages/result_game_computer.html', {'stage': stage, 'teams': teams,
                                                                'user_team': user_team})
-
-
-
 
 
 # home view
