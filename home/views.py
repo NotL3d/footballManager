@@ -168,6 +168,7 @@ class HomePageView(TemplateView):
 
 
 # view for user registration
+
 class UserCreateView(CreateView):
     template_name = 'registration/user/create_user.html'
     model = CustomUserModel
@@ -176,6 +177,7 @@ class UserCreateView(CreateView):
 
 
 # view for update an existing account
+@login_required
 class UserUpdateView(UpdateView):
     template_name = 'registration/user/update_user.html'
     model = CustomUserModel
@@ -184,6 +186,7 @@ class UserUpdateView(UpdateView):
 
 
 # view for detail of an existing account
+@login_required
 class UserDetailView(DetailView):
     template_name = 'registration/user/detail_user.html'
     model = CustomUserModel
@@ -191,6 +194,7 @@ class UserDetailView(DetailView):
 
 
 # view for deleting user account
+@login_required
 class UserDeleteView(DeleteView):
     template_name = 'registration/user/delete_user.html'
     model = CustomUserModel
