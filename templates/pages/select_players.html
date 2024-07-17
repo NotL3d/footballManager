@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     {% include 'navbar.html' %}
-    <div class="container-fluid col-md-6 my-5" style="padding-top:80px">
+    <div class="container-fluid col-md-8 my-5" style="padding-top:80px">
         <form method="post" class="form-group bg-light p-4 rounded shadow-sm mt-4">
             {% csrf_token %}
             <label for="players" class="font-weight-bold">Alege 11 jucători pentru echipa ta:</label>
@@ -12,7 +12,7 @@
             <div id="players" class="form-check mt-2 mb-4">
                 {% for widget in form.players %}
                     <div class="form-check">
-                        {{ widget.tag }} 
+                        {{ widget.tag }}   
                         <label class="form-check-label">
                             {{ widget.choice_label }}
                         </label>

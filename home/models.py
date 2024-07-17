@@ -47,12 +47,12 @@ class TeamModel(models.Model):
 
 
 class ChoseTeamModel(models.Model):
-
     user = models.OneToOneField(CustomUserModel, on_delete=models.CASCADE, null=True)
     team = models.ForeignKey(TeamModel, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"{self.user.username} - {self.team.name}"
+
 
 class Player(models.Model):
     position_options = (
@@ -76,7 +76,9 @@ class Player(models.Model):
     overall_avg = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f'{self.name} poziție ({self.position})'
+        return (f'{self.name} POZIȚIE: ({self.position})  stats : vârsta {self.age}, control minge: {self.ball_skills},'
+                f'control pase: {self.passing}, șut {self.shooting}, apărare {self.defence}, '
+                f'puncte portar:{self.goalkeeper} , puncte : {self.overall_avg}')
 
     def save(self, *args, **kwargs):
         attributes_fields = [
@@ -88,14 +90,11 @@ class Player(models.Model):
         self.overall_avg = total_skills / len(attributes_fields)
         super().save(*args, **kwargs)
 
+
 # selected player model
 class SelectedPlayer(models.Model):
     user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE)
-    player = models.ForeignKey(Player,on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'La echipa ta s-a alăturat :  {self.player}'
-
-
-
-

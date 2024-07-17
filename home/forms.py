@@ -111,7 +111,7 @@ class PlayerSelectionForm(forms.Form):
         players = cleaned_data.get('players')
 
         if len(players) != 11:
-            raise forms.ValidationError("You must select exactly 11 players.")
+            raise forms.ValidationError("Trebuie sa selectezi 11 jucători")
 
         position_counts = {pos: 0 for pos, _ in Player.position_options}
 
@@ -119,12 +119,12 @@ class PlayerSelectionForm(forms.Form):
             position_counts[player.position] += 1
 
         if position_counts['goalkeeper'] != 1:
-            raise forms.ValidationError("You must select exactly 1 Goalkeeper.")
+            raise forms.ValidationError("Trebuie să selectezi un portar.")
         if position_counts['defender'] != 4:
-            raise forms.ValidationError("You must select exactly 4 Defenders.")
+            raise forms.ValidationError("Trebuie să selectezi 4 apărători.")
         if position_counts['midfielder'] != 4:
-            raise forms.ValidationError("You must select exactly 4 Midfielders.")
+            raise forms.ValidationError("Trebuie să selectezi 4 mijlocași.")
         if position_counts['attacker'] != 2:
-            raise forms.ValidationError("You must select exactly 2 Attackers.")
+            raise forms.ValidationError("Trebuie să selectezi 2 atacatori.")
 
         return cleaned_data

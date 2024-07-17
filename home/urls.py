@@ -1,6 +1,6 @@
 from django.urls import path
 from home import views
-from home.views import choose_team, select_players,chosen_players
+from home.views import choose_team, select_players, chosen_players
 
 urlpatterns = [
     # home path
@@ -14,5 +14,7 @@ urlpatterns = [
     path('choose_team/', choose_team, name='choose_team'),
     path('select_players/', select_players, name='select_players'),
     path('chosen-players/', chosen_players, name='chosen_players'),
-
+    # play path
+    path('start-tournament/', views.start_tournament, name='start_tournament'),
+    path('tournament-stage/', views.tournament_stage, name='tournament_stage'),
 ]

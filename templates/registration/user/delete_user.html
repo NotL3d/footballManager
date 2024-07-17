@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %} Șterge utilizatorul - {{ customuser.username }} {% endblock %}
+{% block title %} Șterge utilizatorul - {{ customusermodel.username }} {% endblock %}
 
 {% block content %}
     <style>
@@ -49,7 +49,7 @@
             <div class="col-md-6">
                 <div class="card card-custom">
                     <div class="card-header card-header-custom">
-                        <h3>Șterge utilizatorul - {{ customuser.username }}</h3>
+                        <h3>Șterge utilizatorul - {{ customusermodel.username }}</h3>
                     </div>
                     <form method="post">
                         {% csrf_token %}
