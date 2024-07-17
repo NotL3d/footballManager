@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div class="container mt-4" style="padding-top: 50px">
+        <h2 class="text-center" style="color: white">{{ stage }}</h2>
+        <ul class="list-group">
+            {% for team in teams %}
+                <li class="list-group-item {% if team.id == user_team.id %}bg-info text-white{% endif %}">
+                    {{ team.name }} {% if team.id == user_team.id %} (Your Team){% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if stage == 'Champion' %}
+            <h3 class="text-center mt-4 text-success">Champion: {{ champion.name }}</h3>
+        {% endif %}
+
+        {% if messages %}
+            <div class="alert alert-warning mt-4">
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            <a href="{% url 'tournament_stage' %}" class="btn btn-primary">Next Stage</a>
+        </div>
+    </div>
+{% endblock %}
+
