@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DetailView, DeleteView
@@ -177,8 +178,8 @@ class UserCreateView(CreateView):
 
 
 # view for update an existing account
-@login_required
-class UserUpdateView(UpdateView):
+
+class UserUpdateView(LoginRequiredMixin,UpdateView):
     template_name = 'registration/user/update_user.html'
     model = CustomUserModel
     form_class = CustomUserUpdateForm
@@ -186,16 +187,16 @@ class UserUpdateView(UpdateView):
 
 
 # view for detail of an existing account
-@login_required
-class UserDetailView(DetailView):
+
+class UserDetailView(LoginRequiredMixin,DetailView):
     template_name = 'registration/user/detail_user.html'
     model = CustomUserModel
     context_object_name = 'user_profile'
 
 
 # view for deleting user account
-@login_required
-class UserDeleteView(DeleteView):
+
+class UserDeleteView(LoginRequiredMixin,DeleteView):
     template_name = 'registration/user/delete_user.html'
     model = CustomUserModel
     success_url = reverse_lazy('home_page')
