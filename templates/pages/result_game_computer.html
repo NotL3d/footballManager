@@ -11,8 +11,9 @@
             {% endfor %}
         </ul>
 
-        {% if stage == 'Champion' %}
-            <h3 class="text-center mt-4 text-success">Champion: {{ champion.name }}</h3>
+        {% if stage == 'Campioana!' %}
+             <div class="text-center mt-4">
+            <a href="{% url 'start_tournament' %}" class="btn btn-secondary">Joacă din nou!</a>
         {% endif %}
 
         {% if messages %}
@@ -26,7 +27,7 @@
         {% endif %}
 
         <div class="text-center mt-4">
-            <a href="{% url 'tournament_stage' %}" class="btn btn-primary">Next Stage</a>
+            <a href="{% url 'tournament_stage' %}" class="btn btn-primary">Următoarea etapă</a>
         </div>
     </div>
 {% endblock %}

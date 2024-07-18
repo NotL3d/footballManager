@@ -101,14 +101,15 @@ def compute_team_score(team):
     score = 0
     for player in players:
         score += player.ball_skills + player.passing + player.shooting + player.defence + player.physical + player.mental + player.goalkeeper
+    score = round(score/1100)
     return score
 
 
 def simulate_match(team1, team2):
-    score1 = compute_team_score(team1) + random.randint(-10, 10)
-    score2 = compute_team_score(team2) + random.randint(-10, 10)
-    print(f'this is the score of compute_team_score of team 1 {compute_team_score(team1)}')
-    print(score1)
+    score1 = compute_team_score(team1) + random.randint(-1, 2)
+    score2 = compute_team_score(team2) + random.randint(-1, 2)
+    # print(f'this is the score of compute_team_score of team 1 {compute_team_score(team1)}')
+    # print(score1)
     return score1, score2
 
 
@@ -134,7 +135,7 @@ def simulate_stage(teams, user_team, user):
                 winners.append(team1)
             else:
                 winners.append(team2)
-    print(winners)
+    # print(winners)
     if user_won:
         user.wins += 1
         user.save()
@@ -189,9 +190,9 @@ def tournament_stage(request):
             return redirect('start_tournament')
         champion = winners[0]
         request.session['tournament_teams'] = [champion.id]
-        request.session['current_stage'] = 'Champion'
+        request.session['current_stage'] = 'Campioana!'
         return render(request, 'pages/result_game_computer.html',
-                      {'stage': stage, 'teams': teams, 'champion': champion})
+                      {'stage': stage, 'teams': teams, 'Campioana!': user_team})
 
     return render(request, 'pages/result_game_computer.html', {'stage': stage, 'teams': teams,
                                                                'user_team': user_team})

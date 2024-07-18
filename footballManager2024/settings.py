@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Europe/Bucharest'
-
+USE_L10N = True
 USE_I18N = True
 
 USE_TZ = True
@@ -141,3 +141,9 @@ AUTH_USER_MODEL = 'home.CustomUserModel'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = reverse_lazy('home_page')
+
+
+# Charset
+
+DEFAULT_CHARSET = 'utf-8'
+FILE_CHARSET = 'utf-8'
