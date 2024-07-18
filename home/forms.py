@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from home.models import CustomUserModel, Player, SelectedPlayer, ChoseTeamModel
+from django.forms.widgets import Select
 
 
 
@@ -92,39 +93,98 @@ class AuthenticationNewForm(AuthenticationForm):
 
 
 
+class CustomSelectWidget(Select):
+    def __init__(self, attrs=None, choices=()):
+        attrs = attrs or {}
+        attrs.update({'class': 'form-select'})  # Add Bootstrap custom-select class
+        super().__init__(attrs=attrs, choices=choices)
 
 class PlayerSelectionForm(forms.Form):
-    players = forms.ModelMultipleChoiceField(
+    goalkeeper = forms.ModelChoiceField(
         queryset=Player.objects.none(),
-        widget=forms.CheckboxSelectMultiple
+        label='Select 1 goalkeeper',
+        widget=CustomSelectWidget()
+    )
+    attacker_1 = forms.ModelChoiceField(
+        queryset=Player.objects.none(),
+        label='Selectează primul atacant',
+        widget=CustomSelectWidget()
+    )
+    attacker_2 = forms.ModelChoiceField(
+        queryset=Player.objects.none(),
+        label='Selectează al 2-lea atacant',
+        widget=CustomSelectWidget()
+    )
+    defender = forms.ModelChoiceField(
+        queryset=Player.objects.none(),
+        label='Selectează primul apărător',
+        widget=CustomSelectWidget()
+    )
+    defender_2 = forms.ModelChoiceField(
+        queryset=Player.objects.none(),
+        label='Selectează al 2-lea apărător',
+        widget=CustomSelectWidget()
+    )
+    defender_3= forms.ModelChoiceField(
+        queryset=Player.objects.none(),
+        label='Selectează al 3- lea apărător',
+        widget=CustomSelectWidget()
+    )
+    defender_4 = forms.ModelChoiceField(
+        queryset=Player.objects.none(),
+        label='Selectează al 4-lea apărător',
+        widget=CustomSelectWidget()
+    )
+    midfielder = forms.ModelChoiceField(
+        queryset=Player.objects.none(),
+        label='Selectează primul mijlocaș',
+        widget=CustomSelectWidget()
+    )
+    midfielder_2 = forms.ModelChoiceField(
+        queryset=Player.objects.none(),
+        label='Selectează al 2-lea mijlocaș',
+        widget=CustomSelectWidget()
+    )
+    midfielder_3 = forms.ModelChoiceField(
+        queryset=Player.objects.none(),
+        label='Selectează al 3-lea mijlocaș',
+        widget=CustomSelectWidget()
+    )
+    midfielder_4 = forms.ModelChoiceField(
+        queryset=Player.objects.none(),
+        label='Selectează al 4-lea mijlocaș',
+        widget=CustomSelectWidget()
     )
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
-        super(PlayerSelectionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+
         if user:
             chosen_team = ChoseTeamModel.objects.get(user=user)
-            self.fields['players'].queryset = Player.objects.filter(team=chosen_team.team)
-
+            self.fields['goalkeeper'].queryset = Player.objects.filter(team=chosen_team.team)
+            self.fields['attacker_1'].queryset = Player.objects.filter(team=chosen_team.team)
+            self.fields['attacker_2'].queryset = Player.objects.filter(team=chosen_team.team)
+            self.fields['defender'].queryset = Player.objects.filter(team=chosen_team.team)
+            self.fields['defender_2'].queryset = Player.objects.filter(team=chosen_team.team)
+            self.fields['defender_3'].queryset = Player.objects.filter(team=chosen_team.team)
+            self.fields['defender_4'].queryset = Player.objects.filter(team=chosen_team.team)
+            self.fields['midfielder'].queryset = Player.objects.filter(team=chosen_team.team)
+            self.fields['midfielder_2'].queryset = Player.objects.filter(team=chosen_team.team)
+            self.fields['midfielder_3'].queryset = Player.objects.filter(team=chosen_team.team)
+            self.fields['midfielder_4'].queryset = Player.objects.filter(team=chosen_team.team)
     def clean(self):
         cleaned_data = super().clean()
-        players = cleaned_data.get('players')
-
-        if len(players) != 11:
-            raise forms.ValidationError("Trebuie sa selectezi 11 jucători")
-
-        position_counts = {pos: 0 for pos, _ in Player.position_options}
-
-        for player in players:
-            position_counts[player.position] += 1
-
-        if position_counts['goalkeeper'] != 1:
-            raise forms.ValidationError("Trebuie să selectezi un portar.")
-        if position_counts['defender'] != 4:
-            raise forms.ValidationError("Trebuie să selectezi 4 apărători.")
-        if position_counts['midfielder'] != 4:
-            raise forms.ValidationError("Trebuie să selectezi 4 mijlocași.")
-        if position_counts['attacker'] != 2:
-            raise forms.ValidationError("Trebuie să selectezi 2 atacatori.")
-
         return cleaned_data
+
+
+
+
+
+
+
+
+
+
+
+

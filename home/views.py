@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DetailView, DeleteView
@@ -48,10 +47,35 @@ def select_players(request):
     if request.method == 'POST':
         form = PlayerSelectionForm(request.POST, user=request.user)
         if form.is_valid():
+            # Clear existing selected players for the user
             SelectedPlayer.objects.filter(user=request.user).delete()
-            players = form.cleaned_data['players']
-            for player in players:
-                SelectedPlayer.objects.create(user=request.user, player=player)
+
+            # Save the selected players from the form
+            goalkeeper = form.cleaned_data['goalkeeper']
+            attacker = form.cleaned_data['attacker_1']
+            attacker_2 = form.cleaned_data['attacker_2']
+            defender = form.cleaned_data['defender']
+            defender_2 = form.cleaned_data['defender_2']
+            defender_3 = form.cleaned_data['defender_3']
+            defender_4 = form.cleaned_data['defender_4']
+            midfielder = form.cleaned_data['midfielder']
+            midfielder_2 = form.cleaned_data['midfielder_2']
+            midfielder_3 = form.cleaned_data['midfielder_3']
+            midfielder_4 = form.cleaned_data['midfielder_4']
+
+            SelectedPlayer.objects.create(user=request.user, player=goalkeeper)
+            SelectedPlayer.objects.create(user=request.user, player=attacker)
+            SelectedPlayer.objects.create(user=request.user, player=attacker_2)
+            SelectedPlayer.objects.create(user=request.user, player=defender)
+            SelectedPlayer.objects.create(user=request.user, player=defender_2)
+            SelectedPlayer.objects.create(user=request.user, player=defender_3)
+            SelectedPlayer.objects.create(user=request.user, player=defender_4)
+            SelectedPlayer.objects.create(user=request.user, player=midfielder)
+            SelectedPlayer.objects.create(user=request.user, player=midfielder_2)
+            SelectedPlayer.objects.create(user=request.user, player=midfielder_3)
+            SelectedPlayer.objects.create(user=request.user, player=midfielder_4)
+
+            # Redirect to home_page upon successful form submission
             return redirect('home_page')
     else:
         form = PlayerSelectionForm(user=request.user)
@@ -83,12 +107,16 @@ def compute_team_score(team):
 def simulate_match(team1, team2):
     score1 = compute_team_score(team1) + random.randint(-10, 10)
     score2 = compute_team_score(team2) + random.randint(-10, 10)
+    print(f'this is the score of compute_team_score of team 1 {compute_team_score(team1)}')
+    print(score1)
     return score1, score2
 
 
-def simulate_stage(teams, user_team):
+
+def simulate_stage(teams, user_team, user):
     matches = [(teams[i], teams[i + 1]) for i in range(0, len(teams), 2)]
     winners = []
+
     user_won = False
 
     for team1, team2 in matches:
@@ -98,12 +126,18 @@ def simulate_stage(teams, user_team):
                 winners.append(user_team)
                 user_won = True
             else:
+                user.losses += 1
+                user.save()
                 return None, False  # User lost
         else:
             if score1 > score2:
                 winners.append(team1)
             else:
                 winners.append(team2)
+    print(winners)
+    if user_won:
+        user.wins += 1
+        user.save()
 
     return winners, user_won
 
@@ -115,7 +149,7 @@ def start_tournament(request):
     computer_team = all_teams.pop()  # Choose a computer team
     tournament_teams = [user_team, computer_team] + all_teams[:14]  # Total 16 teams
     request.session['tournament_teams'] = [team.id for team in tournament_teams]
-    request.session['current_stage'] = 'Round of 16'
+    request.session['current_stage'] = 'Primele 16 echipe'
     return redirect('tournament_stage')
 
 
@@ -124,34 +158,34 @@ def tournament_stage(request):
     teams = TeamModel.objects.filter(id__in=request.session['tournament_teams'])
     stage = request.session['current_stage']
 
-    if stage == 'Round of 16':
-        winners, user_won = simulate_stage(teams, user_team)
+    if stage == 'Primele 16 echipe':
+        winners, user_won = simulate_stage(teams, user_team, request.user)
         if not user_won:
-            messages.error(request, "You lost! Game over.")
+            messages.error(request, "Din păcate ai pierdut!")
             return redirect('start_tournament')
         request.session['tournament_teams'] = [team.id for team in winners]
-        request.session['current_stage'] = 'Quarterfinals'
+        request.session['current_stage'] = 'Sferturi de finală'
 
-    elif stage == 'Quarterfinals':
-        winners, user_won = simulate_stage(teams, user_team)
+    elif stage == 'Sferturi de finală':
+        winners, user_won = simulate_stage(teams, user_team, request.user)
         if not user_won:
-            messages.error(request, "You lost! Game over.")
+            messages.error(request, "Din păcate ai pierdut!")
             return redirect('start_tournament')
         request.session['tournament_teams'] = [team.id for team in winners]
-        request.session['current_stage'] = 'Semifinals'
+        request.session['current_stage'] = 'Semifinale'
 
-    elif stage == 'Semifinals':
-        winners, user_won = simulate_stage(teams, user_team)
+    elif stage == 'Semifinale':
+        winners, user_won = simulate_stage(teams, user_team, request.user)
         if not user_won:
-            messages.error(request, "You lost! Game over.")
+            messages.error(request, "Din păcate ai pierdut!")
             return redirect('start_tournament')
         request.session['tournament_teams'] = [team.id for team in winners]
-        request.session['current_stage'] = 'Final'
+        request.session['current_stage'] = 'Finala'
 
-    elif stage == 'Final':
-        winners, user_won = simulate_stage(teams, user_team)
+    elif stage == 'Finala':
+        winners, user_won = simulate_stage(teams, user_team, request.user)
         if not user_won:
-            messages.error(request, "You lost! Game over.")
+            messages.error(request, "Din păcate ai pierdut!")
             return redirect('start_tournament')
         champion = winners[0]
         request.session['tournament_teams'] = [champion.id]
@@ -179,7 +213,7 @@ class UserCreateView(CreateView):
 
 # view for update an existing account
 
-class UserUpdateView(LoginRequiredMixin,UpdateView):
+class UserUpdateView(UpdateView):
     template_name = 'registration/user/update_user.html'
     model = CustomUserModel
     form_class = CustomUserUpdateForm
@@ -188,7 +222,7 @@ class UserUpdateView(LoginRequiredMixin,UpdateView):
 
 # view for detail of an existing account
 
-class UserDetailView(LoginRequiredMixin,DetailView):
+class UserDetailView(DetailView):
     template_name = 'registration/user/detail_user.html'
     model = CustomUserModel
     context_object_name = 'user_profile'
@@ -196,7 +230,7 @@ class UserDetailView(LoginRequiredMixin,DetailView):
 
 # view for deleting user account
 
-class UserDeleteView(LoginRequiredMixin,DeleteView):
+class UserDeleteView(DeleteView):
     template_name = 'registration/user/delete_user.html'
     model = CustomUserModel
     success_url = reverse_lazy('home_page')

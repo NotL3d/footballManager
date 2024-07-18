@@ -1,7 +1,7 @@
 {% load static %}
 <nav class="navbar navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home_page' %}"><i class="bi bi-arrow-left-right"></i></a>
+        <a class="navbar-brand" href="{% url 'home_page' %}"><img src={% static 'favicon_website.ico' %}></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
                 aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -16,14 +16,16 @@
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Meniu Principal</a>
+                        <a class="nav-link active" aria-current="page" href="{% url 'home_page' %}" style="padding-bottom: 10px">Meniu Principal</a>
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'chosen_players' %}"> <i class="bi bi-people"></i>  Echipa mea!  </a>
+                            <a class="nav-link" href="{% url 'chosen_players' %}"> <i class="bi bi-people"></i> 
+                                Jucătorii selectați! </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'select_players' %}"><i class="bi bi-arrow-left-right"></i> Alege jucătorii</a>
+                            <a class="nav-link" href="{% url 'select_players' %}"><i class="bi bi-arrow-left-right"></i>
+                                Alege jucătorii</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'choose_team' %}"><i class="bi bi-code"></i> Schimba
@@ -44,13 +46,13 @@
                     {% endif %}
                     <li class="nav-item">
                         {% if user.is_authenticated %}
-                            <form method="post" action="{% url 'logout' %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-danger"
-                                        style="background-color: orangered;color:white; margin-right: 5px">
-                                    Logout, {{ user.username }}
-                                </button>
-                            </form>
+                           <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger"
+                                    style="background-color: darkorange;color:white; margin-right: 5px">
+                                Logout, {{ user.username }}
+                            </button>
+                        </form>
                         {% endif %}
                     </li>
                 </ul>
