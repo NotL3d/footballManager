@@ -26,6 +26,6 @@
                 <p>Din păcate, ai pierut! .</p>
             {% endif %}
         </div>
-        <a href="{% url 'play_with_another_user' %}" class="btn btn-primary">Joacă din nou</a>
+        <a href="{% url 'simulate_user_vs_user' user.id %}" class="btn btn-primary">Joacă din nou</a>
     </div>
 {% endblock %}
