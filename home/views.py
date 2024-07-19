@@ -1,6 +1,7 @@
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DetailView, DeleteView, ListView
 from home.forms import CustomUserForm, CustomUserUpdateForm, PlayerSelectionForm
@@ -10,30 +11,35 @@ import random
 
 @login_required
 def choose_team(request):
-    chosen_team = ChoseTeamModel.objects.get(user=request.user)
-    selected_players = SelectedPlayer.objects.filter(user=request.user)
+    try:
+        chosen_team = ChoseTeamModel.objects.get(user=request.user)
+        team_chosen = True
+    except ChoseTeamModel.DoesNotExist:
+        chosen_team = None
+        team_chosen = False
 
     # Get the new team from the form
     if request.method == 'POST':
         new_team_id = request.POST.get('team_id')
         new_team = TeamModel.objects.get(id=new_team_id)
 
-        # Check if the team has changed
-        if chosen_team.team != new_team:
+        if chosen_team is None:
+            # Create a new ChoseTeamModel entry
+            chosen_team = ChoseTeamModel.objects.create(user=request.user, team=new_team)
+        elif chosen_team.team != new_team:
             # Clear previously selected players
             SelectedPlayer.objects.filter(user=request.user).delete()
 
-            # Optionally, update the chosen team
+            # Update the chosen team
             chosen_team.team = new_team
             chosen_team.save()
 
-        # Redirect or render the page as necessary
         return redirect('select_players')  # Or wherever you want to go next
 
-    # Include chosen_team in the context
     context = {
         'teams': TeamModel.objects.all(),
-        'chosen_team': chosen_team.team,  # Ensure you're accessing the team attribute
+        'chosen_team': chosen_team.team if chosen_team else None,  # Ensure you're accessing the team attribute
+        'team_chosen': team_chosen,
     }
 
     return render(request, 'pages/choose_team.html', context)
@@ -246,3 +252,58 @@ class UserListView(ListView):
 
     def get_queryset(self):
         return CustomUserModel.objects.exclude(id=self.request.user.id)
+
+
+@login_required
+def play_with_another_user(request):
+    users = CustomUserModel.objects.exclude(id=request.user.id)
+    if request.method == 'POST':
+        opponent_id = request.POST.get('opponent')
+        if opponent_id:
+            return redirect('simulate_user_vs_user', opponent_id=opponent_id)
+    return render(request, 'pages/play_with_another_user.html', {'users': users})
+
+def simulate_match_user(team1, team2):
+    # Example simulation logic based on player attributes
+    team1_score = sum(player.overall_avg for player in team1.player_set.all()) // 1100
+    team2_score = sum(player.overall_avg for player in team2.player_set.all()) // 1100
+
+    # Add some randomness
+    team1_score += random.randint(0, 5)
+    team2_score += random.randint(0, 5)
+
+    return team1_score, team2_score
+
+@login_required
+def simulate_user_vs_user(request, opponent_id):
+    CustomUserModel = get_user_model()
+    user = get_object_or_404(CustomUserModel, pk=request.user.id)
+    user_team = get_object_or_404(TeamModel, choseteammodel__user=user)
+    opponent = get_object_or_404(CustomUserModel, pk=opponent_id)
+    opponent_team = get_object_or_404(TeamModel, choseteammodel__user=opponent)
+
+    # Simulate the match
+    user_score, opponent_score = simulate_match_user(user_team, opponent_team)
+
+    # Update user stats
+    if user_score > opponent_score:
+        user.wins += 1
+        opponent.losses += 1
+        user_won = True
+    elif user_score < opponent_score:
+        user.losses += 1
+        opponent.wins += 1
+        user_won = False
+    else:
+        user_won = None  # It's a draw, handle accordingly if needed
+
+    user.save()
+    opponent.save()
+
+    return render(request, 'pages/match_result.html', {
+        'user_team': user_team,
+        'opponent_team': opponent_team,
+        'user_score': user_score,
+        'opponent_score': opponent_score,
+        'user_won': user_won
+    })

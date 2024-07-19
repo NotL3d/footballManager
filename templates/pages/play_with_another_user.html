@@ -13,7 +13,7 @@
                             <p class="card-text">Meciuri câștigate:  {{ user.wins }}</p>
                             <p class="card-text">Meciuri pierdute:  {{ user.losses }}</p>
                             <p class="card-text">Echipa aleasă:  {{ user.choseteammodel.team.name }}</p>
-                       <a class="btn btn-danger" href="#">Joacă cu mine!</a>
+                       <a class="btn btn-danger" href="{% url 'simulate_user_vs_user' user.id %}">Joacă cu mine!</a>
                       </div>
                 {% endfor   %}
 {% endblock %}

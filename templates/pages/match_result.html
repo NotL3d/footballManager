@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div class="container mt-4" style="padding-top: 50px">
+        <h2 style="color: white">Rezultatul meciului!</h2>
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4 class="card-title">Zona ta! </h4>
+                <p class="card-text">Echipa ta!: {{ user_team.name }}</p>
+                <p class="card-text">Scorul: {{ user_score }}</p>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4 class="card-title">Zona adversarului!</h4>
+                <p class="card-text">Echipa adversarului!: {{ opponent_team.name }}</p>
+                <p class="card-text">Scorul: {{ opponent_score }}</p>
+            </div>
+        </div>
+        <div class="alert alert-info mt-3">
+            {% if user_won is None %}
+                <p>Meciul s-a terminat egal.</p>
+            {% elif user_won %}
+                <p>Felicitări! Ai câștigat meciul.</p>
+            {% else %}
+                <p>Din păcate, ai pierut! .</p>
+            {% endif %}
+        </div>
+        <a href="{% url 'play_with_another_user' %}" class="btn btn-primary">Joacă din nou</a>
+    </div>
+{% endblock %}

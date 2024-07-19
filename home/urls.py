@@ -18,5 +18,9 @@ urlpatterns = [
     path('start-tournament/', views.start_tournament, name='start_tournament'),
     path('tournament-stage/', views.tournament_stage, name='tournament_stage'),
     # path to all users
-    path('list_of_users/', views.UserListView.as_view(), name='list_of_users')
+    path('list_of_users/', views.UserListView.as_view(), name='list_of_users'),
+    #play with user path
+    path('play_with_another_user/', views.play_with_another_user, name='play_with_another_user'),
+    path('simulate_user_vs_user/<int:opponent_id>', views.simulate_user_vs_user, name='simulate_user_vs_user'),
+
 ]
