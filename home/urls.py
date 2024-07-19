@@ -17,4 +17,6 @@ urlpatterns = [
     # play path
     path('start-tournament/', views.start_tournament, name='start_tournament'),
     path('tournament-stage/', views.tournament_stage, name='tournament_stage'),
+    # path to all users
+    path('list_of_users/', views.UserListView.as_view(), name='list_of_users')
 ]

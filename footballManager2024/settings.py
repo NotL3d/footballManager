@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['footballmanager2024.pythonanywhere.com', 'footballmanager2024.pythonanywhere.com' ]
 
 
 # Application definition

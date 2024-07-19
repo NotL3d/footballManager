@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, UpdateView, DetailView, DeleteView
+from django.views.generic import TemplateView, CreateView, UpdateView, DetailView, DeleteView, ListView
 from home.forms import CustomUserForm, CustomUserUpdateForm, PlayerSelectionForm
 from home.models import CustomUserModel, TeamModel, ChoseTeamModel, SelectedPlayer, Player
 import random
@@ -235,3 +235,14 @@ class UserDeleteView(DeleteView):
     template_name = 'registration/user/delete_user.html'
     model = CustomUserModel
     success_url = reverse_lazy('home_page')
+
+
+# view list of users
+
+class UserListView(ListView):
+    template_name = 'pages/play_with_another_user.html'
+    model = CustomUserModel
+    context_object_name = 'all_users'
+
+    def get_queryset(self):
+        return CustomUserModel.objects.exclude(id=self.request.user.id)
