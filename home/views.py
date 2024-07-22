@@ -13,34 +13,34 @@ import random
 @login_required
 def choose_team(request):
     try:
-        chosen_team = ChooseTeamModel.objects.get(user=request.user)
-        team_chosen = True
+        choosen_team = ChooseTeamModel.objects.get(user=request.user)
+        team_choosen = True
     except ChooseTeamModel.DoesNotExist:
-        chosen_team = None
-        team_chosen = False
+        choosen_team = None
+        team_choosen = False
 
     # Get the new team from the form
     if request.method == 'POST':
         new_team_id = request.POST.get('team_id')
         new_team = TeamModel.objects.get(id=new_team_id)
 
-        if chosen_team is None:
+        if choosen_team is None:
             # Create a new ChoseTeamModel entry
-            chosen_team = ChooseTeamModel.objects.create(user=request.user, team=new_team)
-        elif chosen_team.team != new_team:
+            choosen_team = ChooseTeamModel.objects.create(user=request.user, team=new_team)
+        elif choosen_team.team != new_team:
             # Clear previously selected players
             SelectedPlayer.objects.filter(user=request.user).delete()
 
             # Update the chosen team
-            chosen_team.team = new_team
-            chosen_team.save()
+            choosen_team.team = new_team
+            choosen_team.save()
 
         return redirect('select_players')  # Or wherever you want to go next
 
     context = {
         'teams': TeamModel.objects.all(),
-        'chosen_team': chosen_team.team if chosen_team else None,  # Ensure you're accessing the team attribute
-        'team_chosen': team_chosen,
+        'choosen_team': choosen_team.team if choosen_team else None,  # Ensure you're accessing the team attribute
+        'team_choosen': team_choosen,
     }
 
     return render(request, 'pages/choose_team.html', context)
@@ -48,7 +48,7 @@ def choose_team(request):
 
 @login_required
 def select_players(request):
-    chosen_team = ChooseTeamModel.objects.get(user=request.user)
+    choosen_team = ChooseTeamModel.objects.get(user=request.user)
     selected_players = SelectedPlayer.objects.filter(user=request.user)
 
     if request.method == 'POST':
@@ -91,7 +91,7 @@ def select_players(request):
 
 
 @login_required
-def chosen_players(request):
+def choosen_players(request):
     selected_players = SelectedPlayer.objects.filter(user=request.user)
 
     return render(request, 'pages/chosen_players.html', {'selected_players': selected_players})
@@ -315,9 +315,9 @@ def simulate_match_user(team1, team2):
 def simulate_user_vs_user(request, opponent_id):
     CustomUserModel = get_user_model()
     user = get_object_or_404(CustomUserModel, pk=request.user.id)
-    user_team = get_object_or_404(TeamModel, choseteammodel__user=user)
+    user_team = get_object_or_404(TeamModel, chooseteammodel__user=user)
     opponent = get_object_or_404(CustomUserModel, pk=opponent_id)
-    opponent_team = get_object_or_404(TeamModel, choseteammodel__user=opponent)
+    opponent_team = get_object_or_404(TeamModel, chooseteammodel__user=opponent)
 
     # Simulate the match
     user_score, opponent_score = simulate_match_user(user_team, opponent_team)
