@@ -27,8 +27,8 @@ note: pc-platform.
 
 1. Clone the repository:
 
-   ```sh
-   PRIVATE REPOSITORY
+  
+(https://github.com/NotL3d/footballManager.git)
 
 ## Features
 
