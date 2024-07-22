@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
-from home.models import CustomUserModel, Player, SelectedPlayer, ChoseTeamModel
+from home.models import CustomUserModel, Player, SelectedPlayer, ChooseTeamModel
 from django.forms.widgets import Select
 
 
@@ -161,7 +161,7 @@ class PlayerSelectionForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         if user:
-            chosen_team = ChoseTeamModel.objects.get(user=user)
+            chosen_team = ChooseTeamModel.objects.get(user=user)
             self.fields['goalkeeper'].queryset = Player.objects.filter(team=chosen_team.team)
             self.fields['attacker_1'].queryset = Player.objects.filter(team=chosen_team.team)
             self.fields['attacker_2'].queryset = Player.objects.filter(team=chosen_team.team)

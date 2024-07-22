@@ -7,7 +7,7 @@ from .models import *
 
 
 admin.site.register(CustomUserModel)
-admin.site.register(ChoseTeamModel)
+admin.site.register(ChooseTeamModel)
 admin.site.register(SelectedPlayer)
 
 @admin.register(Player)

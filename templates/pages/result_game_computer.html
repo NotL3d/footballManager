@@ -3,17 +3,32 @@
     {% include 'navbar.html' %}
     <div class="container mt-4" style="padding-top: 50px">
         <h2 class="text-center" style="color: white">{{ stage }}</h2>
-        <ul class="list-group">
-            {% for team in teams %}
-                <li class="list-group-item {% if team.id == user_team.id %}bg-info text-white{% endif %}">
-                    {{ team.name }} {% if team.id == user_team.id %} (Echipa ta!){% endif %}
-                </li>
+        <div class="row">
+            {% for result in results %}
+                <div class="col-md-6">
+                    <div class="card mb-4 {% if result.team_1 == user_team or result.team_2 == user_team %}border-primary{% endif %}">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Meciul: 
+                                <span class="{% if result.team_1 == user_team %}text-primary{% endif %}">
+                                    {{ result.team_1 }}
+                                </span>
+                                vs
+                                <span class="{% if result.team_2 == user_team %}text-primary{% endif %}">
+                                    {{ result.team_2 }}
+                                </span>
+                            </h5>
+                            <p class="card-text">Scorul:   {{ result.score_team_2 }} - {{ result.score_team_1 }}</p>
+                            <p class="card-text">Numărul de jucători: {{ result.num_players_team1 }} - {{ result.num_players_team2 }}</p>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
-
+        </div>
         {% if stage == 'Campioana!' %}
-             <div class="text-center mt-4">
-            <a href="{% url 'start_tournament' %}" class="btn btn-secondary">Joacă din nou!</a>
+            <div class="text-center mt-4">
+                <a href="{% url 'start_tournament' %}" class="btn btn-secondary">Joacă din nou!</a>
+            </div>
         {% endif %}
 
         {% if messages %}
@@ -31,4 +46,3 @@
         </div>
     </div>
 {% endblock %}
-

@@ -3,7 +3,8 @@
 FootballManager 2024 is a web-based football management game built with Django where users can register, select their team, choose
 players, and compete in a tournament against computer-controlled teams. The game includes user vs. user functionality
 for future expansion.
-
+</br>
+note: pc-platform.
 ## Table of Contents
 
 - [Installation](#installation)

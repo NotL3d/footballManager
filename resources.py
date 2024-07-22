@@ -1,6 +1,6 @@
 from import_export import fields, resources
 from import_export.widgets import ForeignKeyWidget
-from home.models import Player, ChoseTeamModel, TeamModel
+from home.models import Player, ChooseTeamModel, TeamModel
 
 
 class PlayerResource(resources.ModelResource):

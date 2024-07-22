@@ -5,16 +5,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, UpdateView, DetailView, DeleteView, ListView
 from home.forms import CustomUserForm, CustomUserUpdateForm, PlayerSelectionForm
-from home.models import CustomUserModel, TeamModel, ChoseTeamModel, SelectedPlayer, Player
+from home.models import CustomUserModel, TeamModel, ChooseTeamModel, SelectedPlayer, Player
 import random
 
 
+# login_required decorator to restrict access only to authenticated users
 @login_required
 def choose_team(request):
     try:
-        chosen_team = ChoseTeamModel.objects.get(user=request.user)
+        chosen_team = ChooseTeamModel.objects.get(user=request.user)
         team_chosen = True
-    except ChoseTeamModel.DoesNotExist:
+    except ChooseTeamModel.DoesNotExist:
         chosen_team = None
         team_chosen = False
 
@@ -25,7 +26,7 @@ def choose_team(request):
 
         if chosen_team is None:
             # Create a new ChoseTeamModel entry
-            chosen_team = ChoseTeamModel.objects.create(user=request.user, team=new_team)
+            chosen_team = ChooseTeamModel.objects.create(user=request.user, team=new_team)
         elif chosen_team.team != new_team:
             # Clear previously selected players
             SelectedPlayer.objects.filter(user=request.user).delete()
@@ -47,7 +48,7 @@ def choose_team(request):
 
 @login_required
 def select_players(request):
-    chosen_team = ChoseTeamModel.objects.get(user=request.user)
+    chosen_team = ChooseTeamModel.objects.get(user=request.user)
     selected_players = SelectedPlayer.objects.filter(user=request.user)
 
     if request.method == 'POST':
@@ -99,35 +100,48 @@ def chosen_players(request):
 # game loop
 
 def get_user_team(user):
-    return ChoseTeamModel.objects.get(user=user).team
+    return ChooseTeamModel.objects.get(user=user).team
 
 
-def compute_team_score(team):
-    players = Player.objects.filter(team=team)
-    score = 0
-    for player in players:
-        score += player.ball_skills + player.passing + player.shooting + player.defence + player.physical + player.mental + player.goalkeeper
-    score = round(score/1100)
-    return score
+def compute_team_score(team, user_team, user):
+    if user_team == team:
+        players = [sp.player for sp in SelectedPlayer.objects.filter(user=user)]
+    else:
+        all_players = list(Player.objects.filter(team=team))
+        players = random.sample(all_players, min(11, len(all_players)))  # Select 11 or fewer if less than 11 players
+
+    score = sum(player.ball_skills + player.passing + player.shooting + player.defence +
+                player.physical + player.mental + player.goalkeeper for player in players)
 
 
-def simulate_match(team1, team2):
-    score1 = compute_team_score(team1) + random.randint(-1, 2)
-    score2 = compute_team_score(team2) + random.randint(-1, 2)
-    # print(f'this is the score of compute_team_score of team 1 {compute_team_score(team1)}')
-    # print(score1)
-    return score1, score2
+    score = round(score / 1100)
+    return score, len(players)
 
+
+def simulate_match(team1, team2, user_team, user):
+    score1, num_players_team1 = compute_team_score(team1, user_team, user)
+    score2, num_players_team2 = compute_team_score(team2, user_team, user)
+
+    # Adjusting the random score modification to be more balanced
+    score1 += random.randint(-2, 2)
+    score2 += random.randint(-2, 2)
+
+    # Ensure scores are non-negative
+    score1 = max(score1, 0)
+    score2 = max(score2, 0)
+
+    return score1, num_players_team1, score2, num_players_team2
 
 
 def simulate_stage(teams, user_team, user):
     matches = [(teams[i], teams[i + 1]) for i in range(0, len(teams), 2)]
     winners = []
-
+    results = []
     user_won = False
 
     for team1, team2 in matches:
-        score1, score2 = simulate_match(team1, team2)
+        score1, num_players_team1, score2, num_players_team2 = simulate_match(team1, team2, user_team, user)
+
         if team1 == user_team or team2 == user_team:
             if (team1 == user_team and score1 > score2) or (team2 == user_team and score2 > score1):
                 winners.append(user_team)
@@ -135,28 +149,46 @@ def simulate_stage(teams, user_team, user):
             else:
                 user.losses += 1
                 user.save()
-                return None, False  # User lost
         else:
             if score1 > score2:
                 winners.append(team1)
             else:
                 winners.append(team2)
-    # print(winners)
+
+        results.append({
+            'team_1': team1,
+            'team_2': team2,
+            'score_team_1': score1,
+            'score_team_2': score2,
+            'num_players_team1': num_players_team1,
+            'num_players_team2': num_players_team2
+        })
+
     if user_won:
         user.wins += 1
         user.save()
 
-    return winners, user_won
+    return winners, user_won, results
 
 
+@login_required
 def start_tournament(request):
     user_team = get_user_team(request.user)
     all_teams = list(TeamModel.objects.exclude(id=user_team.id))
     random.shuffle(all_teams)
     computer_team = all_teams.pop()  # Choose a computer team
     tournament_teams = [user_team, computer_team] + all_teams[:14]  # Total 16 teams
+
     request.session['tournament_teams'] = [team.id for team in tournament_teams]
     request.session['current_stage'] = 'Primele 16 echipe'
+
+    # Pass the computer_team to the template
+    context = {
+        'user_team': user_team,
+        'computer_team': computer_team,
+        'tournament_teams': tournament_teams,
+    }
+
     return redirect('tournament_stage')
 
 
@@ -165,8 +197,11 @@ def tournament_stage(request):
     teams = TeamModel.objects.filter(id__in=request.session['tournament_teams'])
     stage = request.session['current_stage']
 
+    # Initialize results to avoid reference before assignment
+    results = []
+
     if stage == 'Primele 16 echipe':
-        winners, user_won = simulate_stage(teams, user_team, request.user)
+        winners, user_won, results = simulate_stage(teams, user_team, request.user)
         if not user_won:
             messages.error(request, "Din păcate ai pierdut!")
             return redirect('start_tournament')
@@ -174,7 +209,7 @@ def tournament_stage(request):
         request.session['current_stage'] = 'Sferturi de finală'
 
     elif stage == 'Sferturi de finală':
-        winners, user_won = simulate_stage(teams, user_team, request.user)
+        winners, user_won, results = simulate_stage(teams, user_team, request.user)
         if not user_won:
             messages.error(request, "Din păcate ai pierdut!")
             return redirect('start_tournament')
@@ -182,7 +217,7 @@ def tournament_stage(request):
         request.session['current_stage'] = 'Semifinale'
 
     elif stage == 'Semifinale':
-        winners, user_won = simulate_stage(teams, user_team, request.user)
+        winners, user_won, results = simulate_stage(teams, user_team, request.user)
         if not user_won:
             messages.error(request, "Din păcate ai pierdut!")
             return redirect('start_tournament')
@@ -190,7 +225,7 @@ def tournament_stage(request):
         request.session['current_stage'] = 'Finala'
 
     elif stage == 'Finala':
-        winners, user_won = simulate_stage(teams, user_team, request.user)
+        winners, user_won, results = simulate_stage(teams, user_team, request.user)
         if not user_won:
             messages.error(request, "Din păcate ai pierdut!")
             return redirect('start_tournament')
@@ -198,10 +233,10 @@ def tournament_stage(request):
         request.session['tournament_teams'] = [champion.id]
         request.session['current_stage'] = 'Campioana!'
         return render(request, 'pages/result_game_computer.html',
-                      {'stage': stage, 'teams': teams, 'Campioana!': user_team})
+                      {'stage': stage, 'teams': teams, 'Campioana!': user_team, 'results': results})
 
     return render(request, 'pages/result_game_computer.html', {'stage': stage, 'teams': teams,
-                                                               'user_team': user_team})
+                                                               'user_team': user_team, 'results': results})
 
 
 # home view
@@ -263,6 +298,7 @@ def play_with_another_user(request):
             return redirect('simulate_user_vs_user', opponent_id=opponent_id)
     return render(request, 'pages/play_with_another_user.html', {'users': users})
 
+
 def simulate_match_user(team1, team2):
     # Example simulation logic based on player attributes
     team1_score = sum(player.overall_avg for player in team1.player_set.all()) // 1100
@@ -273,6 +309,7 @@ def simulate_match_user(team1, team2):
     team2_score += random.randint(0, 5)
 
     return team1_score, team2_score
+
 
 @login_required
 def simulate_user_vs_user(request, opponent_id):

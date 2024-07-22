@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+# team options that are used when user choose team to play with
 team_options = (
     ('Spania', 'spain'),
     ('Georgia', 'georgia'),
@@ -21,8 +22,7 @@ team_options = (
 )
 
 
-# Model for user
-
+# Model for user  win and losses are stored in this model
 class CustomUserModel(AbstractUser):
     gender_options = (
         ('male', 'Masculin'),
@@ -38,6 +38,7 @@ class CustomUserModel(AbstractUser):
         return f'{self.username}'
 
 
+# Team model as a team has a name and manager that coordonates
 class TeamModel(models.Model):
     name = models.CharField(max_length=50, choices=team_options, null=False, unique=True)
     manager = models.CharField(max_length=50)
@@ -46,14 +47,15 @@ class TeamModel(models.Model):
         return self.name
 
 
-class ChoseTeamModel(models.Model):
+# choose team model for user to select one of those many teams
+class ChooseTeamModel(models.Model):
     user = models.OneToOneField(CustomUserModel, on_delete=models.CASCADE, null=True)
     team = models.ForeignKey(TeamModel, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f"{self.user.username} - {self.team.name}"
 
-
+# player model  to store information about player
 class Player(models.Model):
     position_options = (
         ('goalkeeper', 'GK'),
@@ -91,7 +93,7 @@ class Player(models.Model):
         super().save(*args, **kwargs)
 
 
-# selected player model
+# selected player model  as the user select players from his team to play with
 class SelectedPlayer(models.Model):
     user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE)
     player = models.ForeignKey(Player, on_delete=models.CASCADE)

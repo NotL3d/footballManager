@@ -1,22 +1,21 @@
 {% extends 'base.html' %}
-
 {% block content %}
     {% include 'navbar.html' %}
     <div class="container mt-4">
         <h2 class="text-center">{{ stage }}</h2>
-        
         <ul class="list-group mt-4">
             {% for team in teams %}
                 <li class="list-group-item {% if team.id == user_team.id %}bg-info text-white{% endif %}">
                     {{ team.name }} {% if team.id == user_team.id %}(Your Team){% endif %}
                 </li>
+		<li class = "list-group-item {% if team.id == computer_team.id%} bg-info text-red {%endif%}">
+			{{ team.name }} {% if team.id == computer_team.id %} (Computer team) {%endif%}
+		</li>
             {% endfor %}
         </ul>
-        
         {% if stage == 'Champion' %}
             <h3 class="text-center mt-4 text-success">Champion: {{ champion.name }}</h3>
         {% endif %}
-        
         {% if messages %}
             <div class="alert alert-warning mt-4">
                 <ul>
@@ -26,7 +25,6 @@
                 </ul>
             </div>
         {% endif %}
-        
         <div class="text-center mt-4">
             <form action="{% url 'tournament_stage' %}" method="post">
                 {% csrf_token %}
